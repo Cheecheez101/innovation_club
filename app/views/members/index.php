@@ -6,11 +6,15 @@
         </a>
     </div>
     
-    <div class="search-bar">
-        <input type="text" placeholder="Search members by name, ID, or email..." id="searchInput">
-        <button onclick="searchMembers()" class="btn btn-secondary">
-            <i class="fas fa-search"></i> Search
-        </button>
+    <div class="search-container">
+        <form class="search-form" onsubmit="searchMembers(event)">
+            <div class="form-group">
+                <input type="text" placeholder="Search members by name, ID, or email..." id="searchInput" value="<?php echo htmlspecialchars($search ?? ''); ?>">
+            </div>
+            <button type="submit" class="btn btn-secondary">
+                <i class="fas fa-search"></i> Search
+            </button>
+        </form>
     </div>
     
     <?php if (empty($members)): ?>
@@ -18,13 +22,13 @@
             <i class="fas fa-users-slash"></i>
             <h3>No Members Found</h3>
             <p>No members have been added to the system yet.</p>
-            <a href="<?php echo BASE_URL; ?>/members/create" class="btn btn-primary">
+            <a href="create" class="btn btn-primary">
                 <i class="fas fa-user-plus"></i> Add Your First Member
             </a>
         </div>
     <?php else: ?>
-        <div class="table-responsive">
-            <table class="data-table">
+        <div class="table-container">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -73,16 +77,19 @@
 </div>
 
 <script>
-function searchMembers() {
+function searchMembers(event) {
+    event.preventDefault();
     const query = document.getElementById('searchInput').value;
     if (query.trim() !== '') {
-        window.location.href = '<?php echo BASE_URL; ?>/members?search=' + encodeURIComponent(query);
+        window.location.href = '?search=' + encodeURIComponent(query);
+    } else {
+        window.location.href = window.location.pathname;
     }
 }
 
 function deleteMember(id) {
     if (confirm('Are you sure you want to delete this member?')) {
-        window.location.href = '<?php echo BASE_URL; ?>/members/delete/' + id;
+        window.location.href = 'delete/' + id;
     }
 }
 </script>

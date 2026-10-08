@@ -1,3 +1,4 @@
+<?php if (!defined('APP_PATH')) { header('Location: /innovation_club/public/'); exit; } ?>
 <div class="dashboard patron-dashboard">
     <div class="dashboard-header">
         <h1><i class="fas fa-hand-holding-heart"></i> Patron Dashboard</h1>

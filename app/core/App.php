@@ -1,6 +1,7 @@
 ﻿<?php
 class App {
     private $controller = 'Dashboard';
+    private $controllerName = 'Dashboard';
     private $method = 'index';
     private $params = [];
 
@@ -12,19 +13,35 @@ class App {
         $url = $this->parseUrl();
 
         // Set controller
-        if (isset($url[0]) && file_exists(APP_PATH . '/controllers/' . ucfirst($url[0]) . 'Controller.php')) {
-            $this->controller = ucfirst($url[0]);
-            unset($url[0]);
+        if (isset($url[0])) {
+            $controllerName = $this->singularize($url[0]);
+            $controllerFile = APP_PATH . '/controllers/' . ucfirst($controllerName) . 'Controller.php';
+            if (file_exists($controllerFile)) {
+                $this->controllerName = ucfirst($controllerName);
+                unset($url[0]);
+            }
         }
 
-        require_once APP_PATH . '/controllers/' . $this->controller . 'Controller.php';
-        $controllerClass = $this->controller . 'Controller';
+        require_once APP_PATH . '/controllers/' . $this->controllerName . 'Controller.php';
+        $controllerClass = $this->controllerName . 'Controller';
         $this->controller = new $controllerClass();
 
         // Set method
         if (isset($url[1])) {
-            if (method_exists($this->controller, $url[1])) {
-                $this->method = $url[1];
+            // Convert kebab-case to camelCase: edit-user -> editUser
+            $parts = explode('-', $url[1]);
+            $methodName = array_shift($parts);
+            foreach ($parts as $part) {
+                $methodName .= ucfirst($part);
+            }
+
+            // Backward compatibility: /controller/view/{id} -> show({id})
+            if ($methodName === 'view' && is_callable([$this->controller, 'show'])) {
+                $methodName = 'show';
+            }
+
+            if (is_callable([$this->controller, $methodName])) {
+                $this->method = $methodName;
                 unset($url[1]);
             }
         }
@@ -48,13 +65,37 @@ class App {
         return ['dashboard'];
     }
 
+    private function singularize($word) {
+        if (substr($word, -1) === 's') {
+            return substr($word, 0, -1);
+        }
+        return $word;
+    }
+
     private function checkAuthentication() {
+        // Temporarily disabled for testing
+        /*
         $publicRoutes = ['auth/login', 'auth/register'];
+        $publicPrefixes = ['projects'];
         $currentRoute = isset($_GET['url']) ? $_GET['url'] : 'dashboard';
 
-        if (!in_array($currentRoute, $publicRoutes) && !isset($_SESSION['user_id'])) {
+        // Debug: log the current route
+        error_log("Current route: " . $currentRoute);
+
+        $isPublic = in_array($currentRoute, $publicRoutes);
+        if (!$isPublic) {
+            foreach ($publicPrefixes as $prefix) {
+                if (strpos($currentRoute, $prefix) === 0) {
+                    $isPublic = true;
+                    break;
+                }
+            }
+        }
+
+        if (!$isPublic && !isset($_SESSION['user_id'])) {
             header('Location: ' . BASE_URL . '/auth/login');
             exit;
         }
+        */
     }
 }

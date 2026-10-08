@@ -1,7 +1,13 @@
+<?php if (!defined('APP_PATH')) { header('Location: /innovation_club/public/'); exit; } ?>
 <div class="dashboard admin-dashboard">
     <div class="dashboard-header">
         <h1><i class="fas fa-crown"></i> Admin Dashboard</h1>
         <p>Welcome back, <?php echo $user['name']; ?>! Here's your system overview.</p>
+        <div class="admin-panel-link">
+            <a href="<?php echo BASE_URL; ?>/admin" class="btn-admin-panel">
+                <i class="fas fa-cog"></i> Admin Panel
+            </a>
+        </div>
     </div>
 
     <!-- Quick Stats Row -->
@@ -60,33 +66,29 @@
                 <a href="<?php echo BASE_URL; ?>/reports" class="view-all">View All</a>
             </div>
             <div class="activities-list">
-                <div class="activity-item">
-                    <div class="activity-icon">
-                        <i class="fas fa-user-plus"></i>
+                <?php if (!empty($recent_activities)): ?>
+                    <?php foreach ($recent_activities as $activity): ?>
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <div class="activity-content">
+                                <p><?php echo htmlspecialchars($activity['title']); ?></p>
+                                <span class="activity-time"><?php echo htmlspecialchars($activity['time']); ?></span>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p>No recent activities</p>
+                            <span class="activity-time">No activities yet</span>
+                        </div>
                     </div>
-                    <div class="activity-content">
-                        <p>New member <strong>John Doe</strong> joined the club</p>
-                        <span class="activity-time">2 hours ago</span>
-                    </div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon">
-                        <i class="fas fa-calendar-plus"></i>
-                    </div>
-                    <div class="activity-content">
-                        <p>Tech Workshop event scheduled for next week</p>
-                        <span class="activity-time">1 day ago</span>
-                    </div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon">
-                        <i class="fas fa-project-diagram"></i>
-                    </div>
-                    <div class="activity-content">
-                        <p>AI Research project milestone completed</p>
-                        <span class="activity-time">3 days ago</span>
-                    </div>
-                </div>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -96,9 +98,17 @@
                 <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
             </div>
             <div class="quick-actions">
-                <a href="<?php echo BASE_URL; ?>/members/create" class="action-btn">
-                    <i class="fas fa-user-plus"></i>
-                    <span>Add Member</span>
+                <a href="<?php echo BASE_URL; ?>/admin/members" class="action-btn">
+                    <i class="fas fa-users-cog"></i>
+                    <span>Manage Members</span>
+                </a>
+                <a href="<?php echo BASE_URL; ?>/admin/users" class="action-btn">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Manage Users</span>
+                </a>
+                <a href="<?php echo BASE_URL; ?>/admin/create-patron" class="action-btn">
+                    <i class="fas fa-user-tie"></i>
+                    <span>Create Patron</span>
                 </a>
                 <a href="<?php echo BASE_URL; ?>/events/create" class="action-btn">
                     <i class="fas fa-calendar-plus"></i>
@@ -108,9 +118,13 @@
                     <i class="fas fa-plus-circle"></i>
                     <span>New Project</span>
                 </a>
+                <a href="<?php echo BASE_URL; ?>/admin/projects" class="action-btn">
+                    <i class="fas fa-project-diagram"></i>
+                    <span>All Projects</span>
+                </a>
                 <a href="<?php echo BASE_URL; ?>/reports" class="action-btn">
                     <i class="fas fa-chart-bar"></i>
-                    <span>Generate Report</span>
+                    <span>View Reports</span>
                 </a>
             </div>
         </div>
@@ -149,28 +163,41 @@
                 <a href="<?php echo BASE_URL; ?>/events" class="view-all">View All</a>
             </div>
             <div class="upcoming-events">
-                <div class="event-item">
-                    <div class="event-date">
-                        <span class="day">15</span>
-                        <span class="month">Feb</span>
+                <?php if (!empty($upcoming_events)): ?>
+                    <?php foreach ($upcoming_events as $event): ?>
+                        <div class="event-item">
+                            <div class="event-date">
+                                <span class="day"><?php echo date('d', strtotime($event['event_date'])); ?></span>
+                                <span class="month"><?php echo date('M', strtotime($event['event_date'])); ?></span>
+                            </div>
+                            <div class="event-details">
+                                <h4><?php echo htmlspecialchars($event['title']); ?></h4>
+                                <p><?php echo htmlspecialchars($event['description'] ?? 'No description available'); ?></p>
+                                <span class="event-time">
+                                    <?php
+                                    if ($event['start_time'] && $event['end_time']) {
+                                        echo date('g:i A', strtotime($event['start_time'])) . ' - ' . date('g:i A', strtotime($event['end_time']));
+                                    } else {
+                                        echo 'Time TBD';
+                                    }
+                                    ?>
+                                </span>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="event-item">
+                        <div class="event-date">
+                            <span class="day">--</span>
+                            <span class="month">No</span>
+                        </div>
+                        <div class="event-details">
+                            <h4>No upcoming events</h4>
+                            <p>No events scheduled at this time</p>
+                            <span class="event-time">Check back later</span>
+                        </div>
                     </div>
-                    <div class="event-details">
-                        <h4>Tech Innovation Workshop</h4>
-                        <p>Hands-on session with latest technologies</p>
-                        <span class="event-time">2:00 PM - 5:00 PM</span>
-                    </div>
-                </div>
-                <div class="event-item">
-                    <div class="event-date">
-                        <span class="day">22</span>
-                        <span class="month">Feb</span>
-                    </div>
-                    <div class="event-details">
-                        <h4>Club General Meeting</h4>
-                        <p>Monthly meeting and project updates</p>
-                        <span class="event-time">10:00 AM - 12:00 PM</span>
-                    </div>
-                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -197,6 +224,32 @@
 .dashboard-header p {
     color: #7f8c8d;
     font-size: 1.1rem;
+}
+
+.admin-panel-link {
+    margin-top: 15px;
+}
+
+.btn-admin-panel {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-admin-panel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    text-decoration: none;
+    color: white;
 }
 
 /* Stats Grid */

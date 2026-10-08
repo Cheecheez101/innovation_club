@@ -41,22 +41,22 @@ class Database {
     
     public function insert($table, $data) {
         $columns = implode(', ', array_keys($data));
-        $placeholders = ':' . implode(', :', array_keys($data));
+        $placeholders = implode(', ', array_fill(0, count($data), '?'));
         $sql = "INSERT INTO $table ($columns) VALUES ($placeholders)";
         
-        $this->query($sql, $data);
+        $this->query($sql, array_values($data));
         return $this->connection->lastInsertId();
     }
     
     public function update($table, $data, $where, $whereParams = []) {
         $set = '';
         foreach ($data as $key => $value) {
-            $set .= "$key = :$key, ";
+            $set .= "$key = ?, ";
         }
         $set = rtrim($set, ', ');
         
         $sql = "UPDATE $table SET $set WHERE $where";
-        $params = array_merge($data, $whereParams);
+        $params = array_merge(array_values($data), $whereParams);
         
         return $this->query($sql, $params)->rowCount();
     }

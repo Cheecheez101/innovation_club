@@ -1,3 +1,4 @@
+<?php if (!defined('APP_PATH')) { header('Location: /innovation_club/public/'); exit; } ?>
 <div class="dashboard member-dashboard">
     <div class="dashboard-header">
         <h1><i class="fas fa-user-graduate"></i> Member Dashboard</h1>
@@ -60,66 +61,58 @@
                 <a href="<?php echo BASE_URL; ?>/projects" class="view-all">View All</a>
             </div>
             <div class="projects-list">
-                <div class="project-item">
-                    <div class="project-info">
-                        <h4>AI Research Initiative</h4>
-                        <p>Machine learning model development</p>
-                        <div class="project-meta">
-                            <span class="role">Role: Developer</span>
-                            <span class="team-size">Team: 8 members</span>
+                <?php if (!empty($projects)): ?>
+                    <?php foreach ($projects as $project): ?>
+                        <div class="project-item">
+                            <div class="project-info">
+                                <h4><?php echo htmlspecialchars($project['title']); ?></h4>
+                                <p><?php echo htmlspecialchars(substr($project['description'] ?? '', 0, 50)); ?><?php echo strlen($project['description'] ?? '') > 50 ? '...' : ''; ?></p>
+                                <div class="project-meta">
+                                    <span class="role">Role: <?php echo htmlspecialchars($project['member_role']); ?></span>
+                                    <span class="team-size">Team: <?php echo $project['team_count']; ?> members</span>
+                                </div>
+                            </div>
+                            <div class="project-status">
+                                <?php
+                                $statusClass = 'active';
+                                $statusText = 'Active';
+                                if ($project['status'] === 'completed') {
+                                    $statusClass = 'completed';
+                                    $statusText = 'Completed';
+                                } elseif ($project['status'] === 'on_hold') {
+                                    $statusClass = 'on-hold';
+                                    $statusText = 'On Hold';
+                                } elseif ($project['status'] === 'idea') {
+                                    $statusClass = 'planning';
+                                    $statusText = 'Planning';
+                                }
+                                ?>
+                                <div class="status-badge <?php echo $statusClass; ?>"><?php echo $statusText; ?></div>
+                                <?php if ($project['status'] === 'completed'): ?>
+                                    <div class="completion-check">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="progress-circle">
+                                        <svg width="60" height="60">
+                                            <circle cx="30" cy="30" r="25" stroke="#ecf0f1" stroke-width="5" fill="none"/>
+                                            <circle cx="30" cy="30" r="25" stroke="#667eea" stroke-width="5" fill="none"
+                                                    stroke-dasharray="157" stroke-dashoffset="47" transform="rotate(-90 30 30)"/>
+                                        </svg>
+                                        <span class="progress-text">70%</span>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
                         </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="empty-state">
+                        <i class="fas fa-project-diagram"></i>
+                        <h4>No projects yet</h4>
+                        <p>You haven't joined or created any projects yet.</p>
+                        <a href="<?php echo BASE_URL; ?>/projects/create" class="btn btn-primary">Create Your First Project</a>
                     </div>
-                    <div class="project-status">
-                        <div class="status-badge active">Active</div>
-                        <div class="progress-circle">
-                            <svg width="60" height="60">
-                                <circle cx="30" cy="30" r="25" stroke="#ecf0f1" stroke-width="5" fill="none"/>
-                                <circle cx="30" cy="30" r="25" stroke="#667eea" stroke-width="5" fill="none"
-                                        stroke-dasharray="157" stroke-dashoffset="47" transform="rotate(-90 30 30)"/>
-                            </svg>
-                            <span class="progress-text">70%</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="project-item">
-                    <div class="project-info">
-                        <h4>IoT Smart Campus</h4>
-                        <p>Sensor network implementation</p>
-                        <div class="project-meta">
-                            <span class="role">Role: Hardware Specialist</span>
-                            <span class="team-size">Team: 12 members</span>
-                        </div>
-                    </div>
-                    <div class="project-status">
-                        <div class="status-badge active">Active</div>
-                        <div class="progress-circle">
-                            <svg width="60" height="60">
-                                <circle cx="30" cy="30" r="25" stroke="#ecf0f1" stroke-width="5" fill="none"/>
-                                <circle cx="30" cy="30" r="25" stroke="#667eea" stroke-width="5" fill="none"
-                                        stroke-dasharray="157" stroke-dashoffset="63" transform="rotate(-90 30 30)"/>
-                            </svg>
-                            <span class="progress-text">60%</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="project-item">
-                    <div class="project-info">
-                        <h4>Mobile App Development</h4>
-                        <p>Club management application</p>
-                        <div class="project-meta">
-                            <span class="role">Role: UI/UX Designer</span>
-                            <span class="team-size">Team: 6 members</span>
-                        </div>
-                    </div>
-                    <div class="project-status">
-                        <div class="status-badge completed">Completed</div>
-                        <div class="completion-check">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                    </div>
-                </div>
+                <?php endif; ?>
             </div>
         </div>
 

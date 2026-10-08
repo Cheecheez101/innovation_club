@@ -13,8 +13,8 @@ class Model {
     }
     
     public function findById($id) {
-        $sql = "SELECT * FROM {$this->table} WHERE id = :id";
-        return $this->db->fetchOne($sql, ['id' => $id]);
+        $sql = "SELECT * FROM {$this->table} WHERE id = ?";
+        return $this->db->fetchOne($sql, [$id]);
     }
     
     public function create($data) {
@@ -22,7 +22,7 @@ class Model {
     }
     
     public function update($id, $data) {
-        return $this->db->update($this->table, $data, "id = :id", ['id' => $id]);
+        return $this->db->update($this->table, $data, "id = ?", [$id]);
     }
     
     public function delete($id) {

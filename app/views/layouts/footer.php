@@ -67,31 +67,6 @@
     </div>
 
     <script src="<?php echo BASE_URL; ?>/assets/js/main.js"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const burger = document.getElementById('navbar-burger');
-            const menu = document.getElementById('navbar-menu');
-
-            if (burger && menu) {
-                burger.addEventListener('click', () => {
-                    burger.classList.toggle('active');
-                    menu.classList.toggle('is-active');
-                    const expanded = burger.getAttribute('aria-expanded') === 'true';
-                    burger.setAttribute('aria-expanded', !expanded);
-                });
-
-                // Close menu when clicking a link (optional)
-                document.querySelectorAll('.navbar-item').forEach(link => {
-                    link.addEventListener('click', () => {
-                        burger.classList.remove('active');
-                        menu.classList.remove('is-active');
-                        burger.setAttribute('aria-expanded', 'false');
-                    });
-                });
-            }
-        });
-    </script>
 </body>
 </html>
 

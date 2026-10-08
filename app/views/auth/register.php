@@ -7,6 +7,8 @@ $title = 'Register - Elite Academy Innovation Club';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Register for Elite Academy Innovation Club Management System">
     <title><?php echo $title; ?></title>
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -181,28 +183,47 @@ $title = 'Register - Elite Academy Innovation Club';
 
         .form-row > * { flex: 1; }
 
-        .btn-register {
-            width: 100%;
-            padding: 1.15rem;
-            background: linear-gradient(135deg, var(--primary), #283593);
-            color: white;
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.875rem 1.5rem;
             border: none;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: 600;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.7rem;
+            gap: 0.5rem;
             transition: all 0.3s ease;
-            margin-top: 1rem;
+            flex: 1;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+            transform: translateY(-1px);
+        }
+
+        .btn-register {
+            background: linear-gradient(135deg, var(--primary), #283593);
+            color: white;
+            font-weight: 600;
         }
 
         .btn-register:hover {
             background: linear-gradient(135deg, #283593, var(--primary));
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(26,35,126,0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(26,35,126,0.25);
         }
 
         .form-footer {
@@ -265,45 +286,83 @@ $title = 'Register - Elite Academy Innovation Club';
                 <div class="form-row">
                     <div class="input-group has-icon">
                         <i class="input-icon fas fa-user"></i>
-                        <input type="text" id="username" name="username" placeholder=" " required autofocus>
-                        <label for="username">Username</label>
+                        <input type="text" id="full_name" name="full_name" placeholder=" " required>
+                        <label for="full_name">Full Name *</label>
                     </div>
 
                     <div class="input-group has-icon">
-                        <i class="input-icon fas fa-user-tag"></i>
-                        <select id="role" name="role" required>
-                            <option value="" disabled selected></option>
-                            <option value="member">Member</option>
-                            <option value="patron">Patron</option>
-                        </select>
-                        <label for="role">Role</label>
+                        <i class="input-icon fas fa-id-card"></i>
+                        <input type="text" id="student_id" name="student_id" placeholder=" " required>
+                        <label for="student_id">Student ID *</label>
                     </div>
                 </div>
 
-                <div class="input-group has-icon">
-                    <i class="input-icon fas fa-envelope"></i>
-                    <input type="email" id="email" name="email" placeholder=" " required>
-                    <label for="email">Email Address</label>
+                <div class="form-row">
+                    <div class="input-group has-icon">
+                        <i class="input-icon fas fa-user"></i>
+                        <input type="text" id="username" name="username" placeholder=" " required>
+                        <label for="username">Username *</label>
+                    </div>
+
+                    <div class="input-group has-icon">
+                        <i class="input-icon fas fa-envelope"></i>
+                        <input type="email" id="email" name="email" placeholder=" " required>
+                        <label for="email">Email Address *</label>
+                    </div>
                 </div>
 
                 <div class="form-row">
                     <div class="input-group has-icon">
                         <i class="input-icon fas fa-lock"></i>
                         <input type="password" id="password" name="password" placeholder=" " required>
-                        <label for="password">Password</label>
+                        <label for="password">Password *</label>
                     </div>
 
                     <div class="input-group has-icon">
                         <i class="input-icon fas fa-lock"></i>
                         <input type="password" id="confirm_password" name="confirm_password" placeholder=" " required>
-                        <label for="confirm_password">Confirm Password</label>
+                        <label for="confirm_password">Confirm Password *</label>
                     </div>
                 </div>
 
-                <button type="submit" class="btn-register">
-                    <i class="fas fa-user-plus"></i>
-                    Create Account
-                </button>
+                <div class="form-row">
+                    <div class="input-group has-icon">
+                        <i class="input-icon fas fa-building"></i>
+                        <select id="department" name="department" required>
+                            <option value="" disabled selected></option>
+                            <option value="Computer Science">Computer Science</option>
+                            <option value="Information Technology">Information Technology</option>
+                            <option value="Software Engineering">Software Engineering</option>
+                            <option value="Electrical Engineering">Electrical Engineering</option>
+                            <option value="Mechanical Engineering">Mechanical Engineering</option>
+                            <option value="Business Administration">Business Administration</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <label for="department">Department *</label>
+                    </div>
+
+                    <div class="input-group has-icon">
+                        <i class="input-icon fas fa-graduation-cap"></i>
+                        <select id="year_of_study" name="year_of_study" required>
+                            <option value="" disabled selected></option>
+                            <option value="Year 1">Year 1</option>
+                            <option value="Year 2">Year 2</option>
+                            <option value="Year 3">Year 3</option>
+                            <option value="Year 4">Year 4</option>
+                        </select>
+                        <label for="year_of_study">Year of Study *</label>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="reset" class="btn btn-secondary">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                    <button type="submit" class="btn-register">
+                        <i class="fas fa-user-plus"></i>
+                        Register Member
+                    </button>
+                </div>
             </form>
 
             <div class="form-footer">

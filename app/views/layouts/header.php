@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Elite Academy Innovation Club Management System">
     <title><?php echo $title ?? APP_NAME; ?></title>
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -84,6 +86,12 @@
     transform: translateY(-1px);
 }
 
+.navbar-item.active {
+    background: rgba(255,255,255,0.2);
+    color: #ffffff;
+    font-weight: 600;
+}
+
 /* User area */
 .user-dropdown-trigger {
     display: flex;
@@ -94,6 +102,15 @@
     cursor: pointer;
     transition: all 0.25s ease;
     position: relative;
+}
+
+.user-profile-link {
+    text-decoration: none;
+    color: #dfe6e9;
+}
+
+.user-profile-link:hover {
+    color: #ffffff;
 }
 
 .user-dropdown-trigger:hover {
@@ -164,6 +181,15 @@
     border: none;
     cursor: pointer;
     padding: 0;
+    z-index: 1001;
+    position: relative;
+    pointer-events: auto;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.navbar-burger:focus {
+    outline: 2px solid #f1c40f;
+    outline-offset: 2px;
 }
 
 .navbar-burger span {
@@ -172,6 +198,8 @@
     background: white;
     border-radius: 10px;
     transition: all 0.4s ease;
+    display: block;
+    position: relative;
 }
 
 .navbar-burger.active span:nth-child(1) {
@@ -202,7 +230,7 @@
         padding: 5rem 2rem 2rem;
         transform: translateY(-100%);
         transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 999;
+        z-index: 998;
     }
 
     .navbar-menu.is-active {
@@ -279,6 +307,7 @@
     </style>
 </head>
 <body>
+    <?php $currentRoute = $_GET['url'] ?? 'dashboard'; ?>
     <header class="main-header">
         <div class="container">
             <nav class="navbar">
@@ -295,23 +324,23 @@
                     <?php if (isset($_SESSION['user_id'])): ?>
                         <!-- Left side navigation -->
                         <div class="navbar-start">
-                            <a href="<?php echo BASE_URL; ?>/dashboard" class="navbar-item">
+                            <a href="<?php echo BASE_URL; ?>/dashboard" class="navbar-item <?php echo strpos($currentRoute, 'dashboard') === 0 ? 'active' : ''; ?>">
                                 <i class="fas fa-home"></i>
                                 <span>Dashboard</span>
                             </a>
-                            <a href="<?php echo BASE_URL; ?>/members" class="navbar-item">
+                            <a href="<?php echo BASE_URL; ?>/members" class="navbar-item <?php echo strpos($currentRoute, 'members') === 0 ? 'active' : ''; ?>">
                                 <i class="fas fa-users"></i>
                                 <span>Members</span>
                             </a>
-                            <a href="<?php echo BASE_URL; ?>/events" class="navbar-item">
+                            <a href="<?php echo BASE_URL; ?>/events" class="navbar-item <?php echo strpos($currentRoute, 'events') === 0 ? 'active' : ''; ?>">
                                 <i class="fas fa-calendar-alt"></i>
                                 <span>Events</span>
                             </a>
-                            <a href="<?php echo BASE_URL; ?>/projects" class="navbar-item">
+                            <a href="<?php echo BASE_URL; ?>/projects" class="navbar-item <?php echo strpos($currentRoute, 'projects') === 0 ? 'active' : ''; ?>">
                                 <i class="fas fa-tasks"></i>
                                 <span>Projects</span>
                             </a>
-                            <a href="<?php echo BASE_URL; ?>/reports" class="navbar-item">
+                            <a href="<?php echo BASE_URL; ?>/reports" class="navbar-item <?php echo strpos($currentRoute, 'reports') === 0 ? 'active' : ''; ?>">
                                 <i class="fas fa-chart-line"></i>
                                 <span>Reports</span>
                             </a>
@@ -319,7 +348,7 @@
 
                         <!-- Right side (user + logout) -->
                         <div class="navbar-end">
-                            <div class="navbar-item user-dropdown-trigger" id="user-menu-trigger">
+                            <a href="<?php echo BASE_URL; ?>/members/profile" class="navbar-item user-dropdown-trigger user-profile-link <?php echo strpos($currentRoute, 'members/profile') === 0 ? 'active' : ''; ?>" id="user-menu-trigger">
                                 <div class="user-avatar">
                                     <?php if (!empty($_SESSION['profile_pic'])): ?>
                                         <img src="<?php echo $_SESSION['profile_pic']; ?>" alt="User" class="avatar-img">
@@ -331,8 +360,8 @@
                                     <span class="user-name"><?php echo htmlspecialchars($_SESSION['username'] ?? 'User'); ?></span>
                                     <span class="user-role"><?php echo ucfirst($_SESSION['role'] ?? 'member'); ?></span>
                                 </div>
-                                <i class="fas fa-chevron-down chevron"></i>
-                            </div>
+                                <i class="fas fa-user-edit chevron"></i>
+                            </a>
 
                             <a href="<?php echo BASE_URL; ?>/auth/logout" class="navbar-item logout-btn">
                                 <i class="fas fa-sign-out-alt"></i>
@@ -351,6 +380,66 @@
             </nav>
         </div>
     </header>
+
+    <script>
+        // Mobile navbar functionality
+        function initMobileNavbar() {
+            const burger = document.getElementById('navbar-burger');
+            const menu = document.getElementById('navbar-menu');
+
+            if (!burger || !menu) {
+                console.warn('Mobile navbar elements not found');
+                return;
+            }
+
+            // Remove any existing event listeners to prevent duplicates
+            burger.removeEventListener('click', burger.clickHandler);
+            document.removeEventListener('click', document.clickHandler);
+
+            // Add click handler for burger button
+            burger.clickHandler = function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                burger.classList.toggle('active');
+                menu.classList.toggle('is-active');
+
+                const expanded = burger.getAttribute('aria-expanded') === 'true';
+                burger.setAttribute('aria-expanded', !expanded);
+            };
+
+            // Add click handler for closing menu when clicking outside
+            document.clickHandler = function(e) {
+                if (!burger.contains(e.target) && !menu.contains(e.target)) {
+                    burger.classList.remove('active');
+                    menu.classList.remove('is-active');
+                    burger.setAttribute('aria-expanded', 'false');
+                }
+            };
+
+            burger.addEventListener('click', burger.clickHandler);
+            document.addEventListener('click', document.clickHandler);
+
+            // Close menu when clicking navbar links
+            document.querySelectorAll('.navbar-item').forEach(link => {
+                link.addEventListener('click', () => {
+                    burger.classList.remove('active');
+                    menu.classList.remove('is-active');
+                    burger.setAttribute('aria-expanded', 'false');
+                });
+            });
+        }
+
+        // Initialize immediately if elements exist
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initMobileNavbar);
+        } else {
+            initMobileNavbar();
+        }
+
+        // Also initialize on window load as fallback
+        window.addEventListener('load', initMobileNavbar);
+    </script>
 
     <div class="container main-container">
         <?php if (isset($_SESSION['success'])): ?>

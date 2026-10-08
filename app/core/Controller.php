@@ -3,10 +3,14 @@ class Controller {
     protected function view($view, $data = []) {
         extract($data);
         
-        $layoutPath = APP_PATH . '/views/layouts/';
         $viewPath = APP_PATH . '/views/' . $view . '.php';
         
         if (file_exists($viewPath)) {
+            $layoutPath = APP_PATH . '/views/layouts/';
+            
+            // Start output buffering
+            ob_start();
+            
             // Start output buffering
             ob_start();
             
@@ -27,6 +31,7 @@ class Controller {
             $content = ob_get_clean();
             echo $content;
         } else {
+            echo "<!-- Debug: View file does not exist: $viewPath -->\n";
             die("View '$view' not found!");
         }
     }
